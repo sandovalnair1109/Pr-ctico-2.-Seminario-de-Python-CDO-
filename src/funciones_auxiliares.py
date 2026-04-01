@@ -39,3 +39,37 @@ def censurar_texto(texto, palabras_prohibidas):
         #devuelvo el texto ya censurado
     return texto_censurado
 
+def validar_email (email):
+    """
+    Valida una dirección de email según los criterios pedidos.
+    Returna True si es válido, False si no
+    """
+
+    #Criterio 1: Solo un @
+    if email.count('@') != 1:
+        return False
+    #separamos en parte local y dominio
+    parte_local, dominio= email.split('@')
+
+    #Criterio 2: al menos 1 carácter antes del @
+    if len(parte_local) == 0:
+        return False
+    
+    #Criterio 4: no empieza con @ ni con un punto
+    if email[0] == '@' or email[0] == '.':
+        return False
+    #Criterio 4: no termina con @ ni con un punto
+    if email[-1] == '@' or email[-1] == '.':
+        return False
+
+    #Criterio 3: al menos un punto después del @ (en el dominio)
+    if '.' not in dominio:
+        return False
+    
+    #Criterio 5: desdepués del último punto, al menos 2 caracteres
+    extension= dominio.split('.')[-1]
+    if len(extension) < 2:
+        return False
+    
+    #Si pasó todos los criterios
+    return False
