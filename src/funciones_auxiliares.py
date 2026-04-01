@@ -13,9 +13,6 @@ def duration_to_seconds(duration_str):
     minutes, second = duration_str.split(":") 
     return int(minutes)*60 + int(second) #devuelve el formato que se pide
 
-    print (duration_to_seconds("5:55"))
-
-
 def reemplazar_ignore_case(texto, objetivo, reemplazo):
     """ 
     Reemplaza 'objetivo' por 'reemplazo' en 'texto'
@@ -26,3 +23,19 @@ def reemplazar_ignore_case(texto, objetivo, reemplazo):
     patron= re.compile (re.escape(objetivo),re.IGNORECASE)
     #sustituimos con .sub()
     return patron.sub(reemplazo, texto)
+
+def censurar_texto(texto, palabras_prohibidas):
+    """
+    Reemplaza cada palabra prohibida por astericos (*).
+    Mantiene el mismo número de caracteres.
+
+    """
+    texto_censurado= texto
+    for palabra in palabras_prohibidas:
+        #nos aseguramos que los asteriscos tengan la misma longitud
+        astericos="*" * len(palabra)
+        #llamo a la función que reemplaza las palabras por los asteriscos en el texto
+        texto_censurado= reemplazar_ignore_case(texto_censurado, palabra, astericos)
+        #devuelvo el texto ya censurado
+    return texto_censurado
+
