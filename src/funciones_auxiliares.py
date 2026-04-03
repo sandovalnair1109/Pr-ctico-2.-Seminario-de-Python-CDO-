@@ -106,3 +106,39 @@ def calcular_costo_envio(peso, zona):
     #accedo primero a la zona si correcta, y luego al rango (diccionario dentro de diccionario)
     return precios[zona.lower()][rango]
 
+from collections import Counter
+def extraer_hashtags (texto):
+    """
+    Extrae todos los hashtags (#palabra) de un texto.
+    Retorna una lista de hashtags encontrados
+    """
+    #\w+ busca letras, números y guiones bajos
+    #El patrón busca # seguido de caracteres de palabra/s
+    return re.findall (r'#\w+', texto)
+
+def analizar_hashtags (posts):
+    """"
+    Analiza una lista de post y retorna estadísiticas de hashtags.
+    Retorna:
+        -trending: dict con hashtags que aparecen >1 vez
+        -total_unicos: int con cantidad total de hashtags únicos
+        -todos_los_hashtags: lista completa para referencia
+    """
+    todos_los_hashtags=[]
+
+    #extraer hashtags de cada post
+    for post in posts:
+        hashtags= extraer_hashtags(post)
+        #guarda cada hashtag de cada post en una lista
+        todos_los_hashtags.extend(hashtags)
+    
+    #contador frecuencias, automáticamente agrupa por clave única
+    contador= Counter(todos_los_hashtags)
+
+    #filtrar trending (más de 1 aparición) --> "Arma un diccionario donde cada elemento sea el hashtag y cuántas veces aparece, 
+    # recorriendo cada hashtag y cantidad, pero solo si la cant es mayor a uno"
+    trending = {tag:count for tag, count in contador.items() if count > 1}
+
+    total_unicos= len(contador)
+
+    return trending, total_unicos,contador
