@@ -226,3 +226,61 @@ def descifrar_cesar (mensaje_cifrado, desplazamiento):
     Retorna el mensaje original
     """
     return cifrar_cesar(mensaje_cifrado, -desplazamiento)
+
+def limpiar_registros_alumnos(students):
+    """
+    Limpia y normaliza registros de alumnos.
+    Retorna lista de diccionarios limpios y ordenados
+    """
+
+    alumnos_limpios={}
+    for student in students:
+        #paso 1: nos aseguramos que no sea nombre vacío
+        nombre = student.get('name')
+        if nombre is None or str(nombre).strip() == "":
+            continue #Saltar este registro
+        nombre = str(nombre).strip()
+
+        #paso2: nos aseguramos que la nota sea numerica y no sea vacía
+        nota = student.get('grade')
+        if nota is None or str(nota).strip() == "":
+            continue
+
+        #Intentar convertir a número
+        try:
+            nota_num = int(float(str(nota).strip()))
+        except ValueError:
+            #si no es nro, descartar
+            continue
+        
+        #paso 3:nos aseguramos que el estado no sea vacío
+        estado = student.get('status')
+        if estado is None:
+            estado = "Aprobado" if nota_num >= 4 else "Desaprobado"
+        else:
+            estado = str(estado).strip()
+        
+        #paso 4: normalizamos el formato
+        nombre_nosrmalizado= nombre.title()
+        estado_normalizado= estado.title()
+
+        #paso 5: procesar duplicados
+        if nombre_nosrmalizado in alumnos_limpios:
+            #si ya existe, quedarse con la nota más alta
+            if nota_num > alumnos_limpios[nombre_nosrmalizado]['grade']:alumnos_limpios[nombre_nosrmalizado] = {
+                'name':nombre_nosrmalizado,
+                'grade':nota_num,
+                'status':estado_normalizado
+            }
+        else:
+            #agregar nuevo alumno
+            alumnos_limpios[nombre_nosrmalizado] = {
+                'name':nombre_nosrmalizado,
+                'grade':nota_num,
+                'status': estado_normalizado
+            }
+    #paso 6: convertir diccionario a lista y ordenar alfabéticamente
+    lista_final = list(alumnos_limpios.values())
+    lista_final.sort(key=lambda x: x['name'])
+
+    return lista_final
