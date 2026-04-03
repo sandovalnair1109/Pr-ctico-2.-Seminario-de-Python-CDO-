@@ -142,3 +142,46 @@ def analizar_hashtags (posts):
     total_unicos= len(contador)
 
     return trending, total_unicos,contador
+
+
+
+import random
+def validar_participantes (nombres):
+    """
+    Validar que haya al menos 3 participantes y no haya duplicados
+    retorna (True, lista_limpia) o (Flase, mensaje_error)
+    """
+    #limpiar espacios
+    limpios = [nombre.strip() for nombre in nombres]
+
+    #nos aseguramos que la cantidad sea suficiente
+    if len(limpios)<3:
+        return False, "Debe haber al menos 3 participantes"
+    
+    #nos aseguramos que no hay duplicados
+    normalizados = [n.lower() for n in limpios]
+    # set() elimina los duplicados automáticamente
+    if len(set(normalizados)) != len(normalizados):
+        return False, "No debe haber nombres duplicados"
+    
+    return True, limpios
+
+def sorteo_amigo_invisible (participantes):
+    """
+    Realiza el sorteo asefurando que nadie se tenga a sí mismo
+    Retorna lista de tuplas (quien_regala, quien_recibe)
+    """
+
+    #crear copia para mezclar
+    destinatarios = participantes.copy()
+
+    #mezclar hasta que nadie coincida con su posición original
+    while True:
+        random.shuffle(destinatarios)
+        #verificar que nadie se tenga a sí mismo
+        #devuelve true si para cada pareja (p,d) el que regala no es el mismo que recibe (p!=d), ya que la lista de destinatarios es una copia de la de participantes. Si se cumple, el sorteo es válido
+        #zip() une ambas listas en pares
+        valido = all(p != d for p, d in zip(participantes, destinatarios))
+        if valido:
+            break
+    return list(zip(participantes, destinatarios))
