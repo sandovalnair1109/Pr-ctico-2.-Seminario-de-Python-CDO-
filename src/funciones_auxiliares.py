@@ -185,3 +185,44 @@ def sorteo_amigo_invisible (participantes):
         if valido:
             break
     return list(zip(participantes, destinatarios))
+
+def cifrar_cesar (texto, desplazamiento):
+    """
+    Cifra un texto usando el método Cesar.
+    Preserva mayúsculas/minúsculas y caracteres no alfabéticos
+    """
+
+    resultado= []
+    for caracter in texto:
+        if caracter.isalpha(): #verifica si la letra es mayúscula
+            #determinar si es mayúscula o minúscula
+            if caracter.isupper():
+                base = ord('A')
+            else:
+                base = ord('a')
+            
+            #Calcular nueva pos con rotación
+            #ord() convierte un carácter en su código numérico
+            #chr() hace lo contrario: convierte un número en carácter
+
+            #trabajamos con posiciones de 0-25, pregunto el codigo del caracter y le resto la base, para saber la pos, y a este valor le sumamos el desplazamiento
+            nueva_pos= (ord(caracter)- base + desplazamiento)%26 #si te pasás de la letra 25 (z), volves a 0 (la A)
+            #pasamos nuevamente la pos a caracter
+            nuevo_char= chr (base + nueva_pos)
+            #lo agrego a la lista
+            resultado.append(nuevo_char)
+        else:
+            #si no es letra (espacio, signo, nro), se mantiene igual
+            resultado.append(caracter)
+    
+    #juntamos los elementos de la lista en un solo texto
+    return ''.join(resultado)
+
+    
+def descifrar_cesar (mensaje_cifrado, desplazamiento):
+    """
+    Descifra un mensaje cifrado con César.
+    Básicamente aplica el mismo algoritmo pero con desplazaciento negativo.
+    Retorna el mensaje original
+    """
+    return cifrar_cesar(mensaje_cifrado, -desplazamiento)
