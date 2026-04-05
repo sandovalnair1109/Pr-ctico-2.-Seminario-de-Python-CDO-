@@ -76,7 +76,7 @@ cd Practico_2
 
 
 # Video de demostración
-
+    https://drive.google.com/file/d/14eZli1H2qbonLn0mBvKkIQCWRtwQH83G/view?usp=sharing
 
 
 # Autor
