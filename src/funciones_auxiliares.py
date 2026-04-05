@@ -284,3 +284,86 @@ def limpiar_registros_alumnos(students):
     lista_final.sort(key=lambda x: x['name'])
 
     return lista_final
+
+def calcular_puntahe_ronda(scores):
+    """
+    Suma los 3 jueces para un participante
+    """
+    return scores ['judge_1']+ scores ['judge_2'] + scores ['judge_3']
+
+def obtener_ganador_ronda (scores_dict):
+    """
+    Devuelve (ganador, puntaje)
+    """
+    puntajes = {}
+    for cook, scores in scores_dict.items():
+        #por cada cocinero, calcula sus puntajes de jueces, independientemente de la ronda
+        puntajes[cook] = calcular_puntahe_ronda(scores)
+    
+    max_puntaje = max(puntajes.values())
+    #busco el nombre del cocinero que tiene ese puntaje
+    ganador = [c for c,p in puntajes.items() if p== max_puntaje][0]
+
+    return ganador, max_puntaje, puntajes
+
+def procesar_competencia(rounds):
+    """
+    Procesa todas las rondas y devuelve estadísticas finales
+    """
+
+    #Inicializar estadísticas para cada cocinero
+    stats= {
+        'Valentina':{'total':0, 'rondas_ganadas':0, 'mejor_ronda':0, 'puntajes':[]},
+        'Mateo':{'total':0, 'rondas_ganadas':0, 'mejor_ronda':0, 'puntajes':[]},
+        'Camila': {'total':0, 'rondas_ganadas':0, 'mejor_ronda':0, 'puntajes':[]},
+        'Santiago': {'total':0, 'rondas_ganadas':0, 'mejor_ronda':0, 'puntajes':[]},
+        'Lucía': {'total':0, 'rondas_ganadas':0, 'mejor_ronda':0, 'puntajes':[]}
+    }
+
+    resultado_rondas = []
+    #usamos enumerate para que nos de el índice y el valor
+    for i, ronda in enumerate (rounds, 1):
+        #itera dentro de la lista de diccionarios, cada diccionario
+        tema =ronda['theme']
+        #llamo a la función que me dice quién ganó 
+        ganador, puntaje_ganador, puntajes = obtener_ganador_ronda(ronda['scores'])
+
+        #actualizar estadísticas
+        #para cada cocinero y su puntaje en la lista de la ronda
+        for cook, punt in puntajes.items():
+            stats[cook]['total'] += punt
+            stats[cook]['puntajes'].append(punt)
+            if punt > stats [cook]['mejor_ronda']:
+                stats[cook]['mejor_ronda'] = punt
+        
+        stats[ganador]['rondas_ganadas'] +=1
+        resultado_rondas.append({
+            'numero':i,
+            'tema': tema,
+            'ganador': ganador,
+            'puntaje_ganador':puntaje_ganador,
+            'puntajes':puntajes
+        })
+    return stats, resultado_rondas
+
+def generar_tabla_final(stats):
+    """
+    Genera lista ordenada para tabla final
+    """
+    tabla=[]
+    #recorremos cada cocinero y sus estadísiticas
+    for cook, data in stats.items():
+        #calculamos promedio
+        promedio = data ['total']/ len(data['puntajes'])
+        #creamos diccionario con los datos formateados
+        tabla.append({
+            'cocinero': cook,
+            'total': data ['total'],
+            'rondas_ganadas':data['rondas_ganadas'], 
+            'mejor_ronda': data['mejor_ronda'],
+            'promedio':promedio
+        })
+    #ordenar por puntaje total descendente
+    #le digo a sort() que use el campo 'total' para comparar
+    tabla.sort(key=lambda x: x['total'], reverse=True)
+    return tabla
